@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Explore Pokémon</h2>
+    <div class="pokemon-container">
+        {% for pokemon in pokemons %}
+            <div class="pokemon" style="border: 1px solid black; margin: 10px; padding: 10px;">
+                <h3>{{ pokemon.name }}</h3>
+                <img src="{{ pokemon.image_url }}" alt="{{ pokemon.name }}" style="width: 100px; height: 100px;">
+                <p>{{ pokemon.description }}</p>
+                <div class="pokemon-footer">
+                    <span class="likeBtn" data-pokemon-id="{{ pokemon.id }}">❤️</span>
+                    <span id="likeCounter{{ pokemon.id }}">{{ pokemon.likes }}</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll(".likeBtn").forEach(btn => {
+        btn.addEventListener('click', function () {
+            const pokemonId = this.dataset.pokemonId;
+            const likeCounter = document.getElementById(`likeCounter${pokemonId}`);
+
+            fetch('/like_pokemon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 'pokemonId': pokemonId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.status);
+                likeCounter.textContent = data.likeCount;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
+{% endblock content %}

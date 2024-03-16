@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <form method="POST" action="{{ url_for('login') }}">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group" style="border: none;">
+                <legend class="form-label">Pokemon Trainer Login</legend>
+
+                <div class="group-form">
+                    {{ form.username.label(class="form-label") }}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control") }}
+                    {% endif %}
+                </div>
+
+                <div class="group-form">
+                    {{ form.password.label(class="form-label") }}
+                    {% if form.password.errors %}
+                        {{ form.password(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(class="form-control") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="group-form">
+                {{ form.submit(class="btn btn-outline-primary") }}
+            </div>
+            <small class="form-text">
+                <a href="{{ url_for('signup') }}">New to Pokemon? Sign up here!</a>
+            </small>
+        </form>
+    </div>
+</div>
+{% endblock content %}

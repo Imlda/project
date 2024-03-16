@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Your Liked Pokemon</h2>
+    {% if liked_pokemons %}
+    <div class="pokemon-container">
+        {% for pokemon in liked_pokemons %}
+            <div class="pokemon" style="border: 1px solid black; margin: 10px; padding: 10px; display: inline-block;">
+                <h3>{{ pokemon.name }}</h3>
+                <img src="{{ pokemon.image_url }}" alt="{{ pokemon.name }}" style="width: 100px; height: 100px;">
+                <p>{{ pokemon.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>You have not liked any Pokemon yet.</p>
+    {% endif %}
+</div>
+{% endblock content %}
