@@ -1,24 +1,17 @@
-# from flask import render_template, redirect, url_for, flash, request
-# from flask_login import login_user, logout_user, login_required, current_user
-# from application import app, db, login_manager
-# from application.models import User, PokemonPost, Like
-# from application.forms import LoginForm, SignUpForm
-# from werkzeug.security import generate_password_hash, check_password_hash
-
 from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import login_user, logout_user, login_required, current_user, login_manager
+from flask_login import login_user, logout_user, login_required, current_user
 from .models import User, PokemonPost, Like
-from .forms import LoginForm, SignUpForm
+from .forms import LoginForm, SignUpForm, ForgotPasswordForm, ResetPasswordForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 
 main = Blueprint('main', __name__)
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
 @main.route('/')
+def root():
+    return redirect(url_for('main.index'))
+
+@main.route('/home')
 @login_required
 def index():
     pokemon_posts = PokemonPost.query.all()
@@ -27,14 +20,14 @@ def index():
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user and check_password_hash(user.password, form.password.data):
+        if user and user.verify_password(form.password.data):
             login_user(user)
-            return redirect(url_for('index'))
+            return redirect(url_for('main.index'))
         else:
             flash('Invalid username or password')
     return render_template('login.html', form=form)
@@ -48,14 +41,14 @@ def signup():
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
     return render_template('signup.html', form=form)
 
 @main.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 
 @main.route('/about')
 def about():
@@ -76,23 +69,35 @@ def like(pokemon_post_id):
         flash('You have liked the post.')
     
     db.session.commit()
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 
-@main.route('/edit_profile', methods=['GET', 'POST'])
-@login_required
-def edit_profile():
-    form = EditProfileForm()
+@main.route('/forgot_password', methods=["GET", "POST"])
+def forgot_password():
+    form = ForgotPasswordForm()
     if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.email = form.email.data
-        if form.password.data:
-            current_user.password = generate_password_hash(form.password.data)
-        db.session.commit()
-        flash('Your account has been updated!')
-        return redirect(url_for('edit_profile'))
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            flash('If an account with that email already exists, a reset email will been sent.', 'info')
+            return redirect(url_for('main.login'))
+        else:
+            flash('Email not found.', 'warning')
+            return redirect(url_for('main.forgot_password'))
+    return render_template('forgot_password.html', title='Forgot Password', form=form)
+
+@main.route('/reset_password', methods=["GET", "POST"])
+def reset_password():
+    if not current_user.is_authenticated:
+        return redirect(url_for('main.login'))
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.get(current_user.id)
+        if not check_password_hash(user.password, form.old_pass.data):
+            flash("Your old password is wrong.", "error")
+        else:
+            user.password = generate_password_hash(form.new_pass.data)
+            db.session.commit()
+            flash("Your password has been reset.", "success")
+            return redirect(url_for('main.index'))
     
-    elif request.method == 'GET':
-        form.username.data = current_user.username
-        form.email.data = current_user.email
-    
-    return render_template('edit_profile.html', form=form)
+    return render_template('reset_password.html', title="Reset Password", form=form)
