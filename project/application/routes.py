@@ -99,5 +99,33 @@ def reset_password():
             db.session.commit()
             flash("Your password has been reset.", "success")
             return redirect(url_for('main.index'))
+
+@main.route('/forgot_password', method=["GET", "POST"])
+def forgot_password():
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        email = User.query.filter_by(email=email)
+    return render_template('forgotpass.html', title='Forgot Password', form=form)
+
+@main.route('reset_password', method=["GET", "POST"])
+def reset_password():
+    form = ResetPasswordForm
+
+    if validate_on_submit():
+        user = User.query.get(current_user.id)
+        if user.password != form.old_pass.data:
+            flash("Your old password is wrong", "error")
+            return redirect(url_for("reset_password"))
+        user.password = form.new_pass.data
+        user.confirm.password = form.confirm_pass.data
+
+        if form.old_pass.data == form.new_pass.data:
+            flash("Your password is the same as the old one", "error")
+            return redirect(url_for("reset_password"))
+
+        db.session.commit()
+        flash("Password has been reset", "success")
+        return redirect(url_for("index"))
     
-    return render_template('reset_password.html', title="Reset Password", form=form)
+    return render_template('resetpass.html', title="ResetPassword", form=form)

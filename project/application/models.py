@@ -55,3 +55,4 @@ class Like(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     pokemon_post_id = db.Column(db.Integer, db.ForeignKey('pokemon_posts.id'), nullable=False)
     like_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+ 
