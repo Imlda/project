@@ -1,25 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokémon Trainer App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}"> <!-- Assuming you have custom CSS -->
-    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-</head>
-<body>
-    {% if current_user.is_authenticated %}
-        {% include 'components/login-header.html' %}
-    {% else %}
-        {% include 'components/logout-header.html' %}
-    {% endif %}
-
-    {% block content %}
-    {% endblock %}
-
-    {% include 'components/footer.html' %}
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Pokemon Gallery{% endblock %}</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f0f0f0;
+                margin: 0;
+                padding: 0;
+            }
     
+            header {
+                background-color: #ffcb05;
+                padding: 10px 0;
+                text-align: center;
+            }
+    
+            header ul {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                text-align: center;
+            }
+
+            header ul li {
+                display: inline;
+                margin-right: 20px;
+            }
+    
+            nav a {
+                margin: 0 15px;
+                text-decoration: none;
+                color: #3b4cca;
+            }
+    
+            main {
+                padding: 20px;
+            }
+    
+            footer {
+                background-color: #3b4cca;
+                color: white;
+                text-align: center;
+                padding: 10px;
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+            }
+        </style>
+    </head>
+<body>
+    <section class="content">
+        {% if current_user.is_authenticated %}
+            {% include "components/login-header.html" %}
+        {% else %}
+            {% include "components/logout-header.html" %}
+        {% endif %}
+
+        <div class="alert-box">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        {% block content %}
+            <h1>Welcome to the Pokémon Gallery!</h1>
+            <p>Explore the world of Pokémon</p>
+        {% endblock %}
+        
+        {% include "components/footer.html" %}
+    </section>
 </body>
 </html>

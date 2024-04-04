@@ -14,7 +14,7 @@ class SignUpForm(FlaskForm):
     fullname = StringField("Full Name", validators=[DataRequired(), Length(min=4, max=16)])
     email = EmailField("Email", validators=[DataRequired(), Email(), exists_email])
     password = PasswordField("Password", validators=[DataRequired(), Length(min=4)])
-    confirm_password = PasswordField("Confirm Password", validators=[DataRequired(), Length(min=8), EqualTo("password")])
+    confirm_password = PasswordField("Confirm Password", validators=[DataRequired(), Length(min=4), EqualTo("password")])
     submit = SubmitField("Sign Up")
 
 class ResetPasswordForm(FlaskForm):
@@ -30,5 +30,5 @@ class ForgotPasswordForm(FlaskForm):
 
 class VerificationForm(FlaskForm):
     password = PasswordField("New Password", validators=[DataRequired(), Length(min=4)])
-    confirm_password = PasswordField("Confirm New Password", validators=[DataRequired(), Length(min=8), EqualTo("password")])
+    confirm_password = PasswordField("Confirm New Password", validators=[DataRequired(), Length(min=4), EqualTo("password")])
     submit = SubmitField("Reset Password")

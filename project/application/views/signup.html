@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
     <div class="form-container">
-        <form method="POST" action="{{ url_for('signup') }}">
+        <form method="POST" action="{{ url_for('main.signup') }}">
             {{ form.hidden_tag() }}
             <fieldset class="group-form" style="border: none;">
                 <legend class="form-label">Pokémon Trainer Sign Up</legend>
@@ -82,7 +82,7 @@
                 {{ form.submit(class="btn btn-outline-primary") }}
             </div>
             <small class="form-text">
-                <a href="{{ url_for('login') }}">Log in!</a>
+                <a href="{{ url_for('main.login') }}">Log in!</a>
             </small>
         </form>
     </div>

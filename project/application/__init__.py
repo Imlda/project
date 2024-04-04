@@ -24,15 +24,11 @@ def create_app():
     login_manager.init_app(app)
 
     from .models import User
-
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.query.get(int(user_id))
-
-    with app.app_context():
-        db.create_all()
-
     from .routes import main as main_routes
     app.register_blueprint(main_routes)
 
     return app
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
