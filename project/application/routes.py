@@ -84,31 +84,31 @@ def forgot_password():
             return redirect(url_for('main.forgot_password'))
     return render_template('forgot_password.html', title='Forgot Password', form=form)
 
+# @main.route('/reset_password', methods=["GET", "POST"])
+# def reset_password():
+#     if not current_user.is_authenticated:
+#         return redirect(url_for('main.login'))
+
+#     form = ResetPasswordForm()
+#     if form.validate_on_submit():
+#         user = User.query.get(current_user.id)
+#         if not check_password_hash(user.password, form.old_pass.data):
+#             flash("Your old password is wrong.", "error")
+#         else:
+#             user.password = generate_password_hash(form.new_pass.data)
+#             db.session.commit()
+#             flash("Your password has been reset.", "success")
+#             return redirect(url_for('main.index'))
+
+# @main.route('/forgot_password', methods=["GET", "POST"])
+# def forgot_password():
+#     form = ForgotPasswordForm()
+#     if form.validate_on_submit():
+#         email = form.email.data
+#         email = User.query.filter_by(email=email)
+#     return render_template('forgotpass.html', title='Forgot Password', form=form)
+
 @main.route('/reset_password', methods=["GET", "POST"])
-def reset_password():
-    if not current_user.is_authenticated:
-        return redirect(url_for('main.login'))
-
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        user = User.query.get(current_user.id)
-        if not check_password_hash(user.password, form.old_pass.data):
-            flash("Your old password is wrong.", "error")
-        else:
-            user.password = generate_password_hash(form.new_pass.data)
-            db.session.commit()
-            flash("Your password has been reset.", "success")
-            return redirect(url_for('main.index'))
-
-@main.route('/forgot_password', method=["GET", "POST"])
-def forgot_password():
-    form = ForgotPasswordForm()
-    if form.validate_on_submit():
-        email = form.email.data
-        email = User.query.filter_by(email=email)
-    return render_template('forgotpass.html', title='Forgot Password', form=form)
-
-@main.route('reset_password', method=["GET", "POST"])
 def reset_password():
     form = ResetPasswordForm
 
